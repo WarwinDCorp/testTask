@@ -1,0 +1,22 @@
+{
+  "name": "yuriy/testtask",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "yuriy",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+    "picqer/php-barcode-generator": "^0.3.0",
+    "ext-pdo": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Classes\\": "\\"
+    }
+  }
+}
