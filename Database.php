@@ -46,6 +46,7 @@ class Database {
             ON TempNumbers.Number = Test.Number
         ";
         $products = $this->conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
+        $this->conn->query("DROP TEMPORARY TABLE TempNumbers")->execute();
         if(!$products) {
             return ['Error' => 2];
         }
