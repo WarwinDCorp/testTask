@@ -16,25 +16,26 @@ class Database {
         if(count($numbers) > MAX) {
             return ['Error' => 1];
         }
-        $nums = [];
-        foreach ($numbers as $key => $value) {
-            $nums[":Key$key"] = $value;
-        }
         $sql = "
         CREATE TEMPORARY TABLE TempNumbers (
             number varchar(18) PRIMARY KEY
         )";
-
-        $bind = [];
-        foreach (array_keys($nums) as $num) {
-            $bind[] = '(' . $num . ')';
-        }
         $this->conn->query($sql);
-        $insert = $this->conn->prepare("INSERT INTO TempNumbers(number) VALUES" . implode(', ', $bind));
-        foreach ($nums as $key => $value) {
-            $insert->bindValue($key, $value, PDO::PARAM_STR);
+        $numbersChunk = array_chunk($numbers, 20);
+        foreach ($numbersChunk as $numbers) {
+            $nums = [];
+            $bind = [];
+            foreach ($numbers as $key => $value) {
+                $nums[":Key$key"] = $value;
+                $bind[] = '(' . $value . ')';
+            }
+            $insert = $this->conn->prepare("INSERT IGNORE INTO TempNumbers(number) VALUES" . implode(', ', $bind));
+            foreach ($nums as $key => $value) {
+                $insert->bindValue($key, $value, PDO::PARAM_STR);
+            }
+            $insert->execute();
         }
-        $insert->execute();
+        
         $query = "
          SELECT 
             Test.Number,
